@@ -1,4 +1,4 @@
-# Skatosaurus 🦕🛹
+# Sk8tosaurus 🦕🛹
 
 Skate like your life depends on it!
 
