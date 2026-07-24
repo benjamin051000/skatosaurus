@@ -1,20 +1,15 @@
 extends Node2D
 
-
-# Called when the node enters the scene tree for the first time.
-#func _ready() -> void:
-	#pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-	#pass
+# TODO length_squared should do the same thing but without a sqrt
+var FLICK_THRESHOLD: float = Vector2(2500, 2500).length()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
-		if event.velocity != event.screen_velocity:
-			print("v", event.velocity, "scr v", event.screen_velocity)
+		# Using velocity instead of screen_velocity, for better or worse...
 		$Status.text = str(event.velocity)
+		print(event.velocity)
+		if abs(event.velocity.length()) >= FLICK_THRESHOLD:
+			$Status.text = "Flick!"
 	elif event is InputEventMouseButton:
 		print(event)
 		var downup_msg = "down" if event.pressed else "up"
