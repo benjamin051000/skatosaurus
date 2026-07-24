@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://df7snqekl5xhc"]
+
+[ext_resource type="AudioStream" uid="uid://5beklfgro5cg" path="res://assets/audio/music/Sk8tosaurus.mp3" id="1_gnqug"]
+
+[sub_resource type="GDScript" id="GDScript_gnqug"]
+script/source = "extends Node2D
+
+var driver_latency := AudioServer.get_output_latency()
+#func get_true_playback_position() -> float:
+	#return $AudioStreamPlayer.get_playback_position() + AudioServer.get_time_since_last_mix() - driver_latency
+	
+const bpm := 83
+const beats_per_measure := 4
+var sec_per_beat := 60.0/bpm
+var last_time := 0.0
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	print(sec_per_beat)
+
+# Called every frame. 'delta' is the elapsed time since the previous frame. TODO does that matter?
+func _process(delta: float) -> void:
+	if $AudioStreamPlayer.playing:
+		var time1: float = $AudioStreamPlayer.get_playback_position()
+		var time2: float = time1 + AudioServer.get_time_since_last_mix()
+		var time3: float = time2 - driver_latency
+		if time3 < last_time:
+			print(\"playback pos {0} was {2} less than last frame's ({1}).\".format([time3, last_time, last_time-time3]))
+		else:
+			last_time = time3
+		
+			var beat_number := int(time3 / sec_per_beat)
+			var measure_number := 1 + beat_number / beats_per_measure
+			var beat_in_measure := 1 + beat_number % beats_per_measure
+			
+			$Label.text = \"raw pos {0}\\nlast mix {1}\\ndriverlat {2}\\nbeat number {3}\\nmeasure {4}\\nbeat in measure {5}\".format([time1, time2, time3, beat_number+1, measure_number, beat_in_measure])
+"
+
+[node name="Node2D" type="Node2D" unique_id=1341507688]
+script = SubResource("GDScript_gnqug")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1852271417]
+stream = ExtResource("1_gnqug")
+autoplay = true
+
+[node name="Label" type="Label" parent="." unique_id=748526151]
+offset_right = 40.0
+offset_bottom = 23.0
