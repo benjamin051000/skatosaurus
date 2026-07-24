@@ -30,6 +30,7 @@ func _process(delta: float) -> void:
 			last_time = time3
 		
 			var beat_number := int(time3 / sec_per_beat)
+			@warning_ignore(\"integer_division\")
 			var measure_number := 1 + beat_number / beats_per_measure
 			var beat_in_measure := 1 + beat_number % beats_per_measure
 			
